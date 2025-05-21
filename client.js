@@ -19,6 +19,9 @@ const socket = net.createConnection(
 socket.on('data', async (data) => {
   const dataStr = data.toString();
   const isClientId = dataStr.indexOf('ID-') === 0;
+  console.log();
+  moveCursorUp(0, -1);
+  clearLine();
   if (isClientId) {
     clientId = dataStr.substring(3);
     console.log(`Your Id is ${clientId}`);

@@ -10,8 +10,14 @@ server.on('connection', (socket) => {
 
   socket.write(`ID-${clientId}`);
 
-  socket.on('data', (message) => {
-    console.log(message.toString());
+  socket.on('data', (data) => {
+    const dataStr = data.toString();
+    const id = dataStr.substring(0, dataStr.indexOf('-'));
+    const message = dataStr.substring(dataStr.indexOf('-message-') + 9);
+    const formattedMessage = `User ${id}: ${message}`;
+    clients.forEach((client) => {
+      client.socket.write(formattedMessage);
+    });
   });
 });
 
