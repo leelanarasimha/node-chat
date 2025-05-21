@@ -6,6 +6,11 @@ let clients = [];
 server.on('connection', (socket) => {
   console.log('New client connected');
   const clientId = clients.length + 1;
+  //Broadcast the message when the new user joins
+  clients.forEach((client) => {
+    client.socket.write(`User ${clientId} Joined`);
+  });
+
   clients.push({ id: clientId.toString(), socket });
 
   socket.write(`ID-${clientId}`);
@@ -17,6 +22,13 @@ server.on('connection', (socket) => {
     const formattedMessage = `User ${id}: ${message}`;
     clients.forEach((client) => {
       client.socket.write(formattedMessage);
+    });
+  });
+
+  socket.on('end', () => {
+    //Broadcast the message when the user left the chat
+    clients.forEach((client) => {
+      client.socket.write(`User ${clientId} left`);
     });
   });
 });

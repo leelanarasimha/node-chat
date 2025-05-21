@@ -32,10 +32,15 @@ socket.on('data', async (data) => {
 });
 
 const ask = async () => {
-  const message = await rl.question('Enter a message: ');
-  socket.write(`${clientId}-message-${message}`);
-  moveCursorUp(0, -1);
-  clearLine(0);
+  try {
+    const message = await rl.question('Enter a message: ');
+    socket.write(`${clientId}-message-${message}`);
+    moveCursorUp(0, -1);
+    clearLine(0);
+  } catch (e) {
+    rl.close();
+    socket.end();
+  }
 };
 
 const moveCursorUp = (x, y) => {
