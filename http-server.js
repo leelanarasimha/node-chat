@@ -5,6 +5,7 @@ const server = http.createServer((req, res) => {
   res.end('Hi there');
 });
 
-server.listen(80, '127.0.0.1', () => {
+server.listen(80, '::1', (socket) => {
+  console.log(server.address());
   console.log('Server running on http://127.0.0.1:80');
 });
