@@ -3,26 +3,37 @@ const fs = require('fs/promises');
 
 const server = net.createServer();
 
+let fileStream;
+let fileHandle;
+
 server.on('connection', async (socket) => {
   console.log('Client connected');
 
-  const fileHandle = await fs.open('storage/test.txt', 'w');
-  const fileStream = fileHandle.createWriteStream();
-
   socket.on('data', async (data) => {
-    if (!fileStream.write(data)) {
+    if (!fileHandle) {
       socket.pause();
+      const indexOfDivider = data.indexOf('---');
+      const fileName = data.subarray(10, indexOfDivider).toString('utf8');
+      fileHandle = await fs.open(`storage/${fileName}`, 'w');
+      fileStream = fileHandle.createWriteStream();
+      fileStream.write(data.subarray(indexOfDivider + 3));
+      socket.resume();
+      fileStream.on('drain', () => {
+        socket.resume();
+      });
+    } else {
+      if (!fileStream.write(data)) {
+        socket.pause();
+      }
     }
-  });
-
-  fileStream.on('drain', () => {
-    socket.resume();
   });
 
   socket.on('end', async () => {
     console.log('Client disconnected');
     fileStream.end();
     await fileHandle.close();
+    fileHandle = undefined;
+    fileStream = undefined;
   });
 });
 
