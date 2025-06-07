@@ -1,6 +1,7 @@
 const net = require('net');
 const fs = require('fs/promises');
 const path = require('path');
+const readline = require('readline');
 
 (async () => {
   const socket = net.createConnection(
@@ -18,7 +19,19 @@ const path = require('path');
       const fileHandle = await fs.open(filePath, 'r');
       const fileStream = fileHandle.createReadStream();
 
+      const fileSize = (await fileHandle.stat()).size;
+      let bytesUploaded = 0;
+      let uploadedPercentage = 0;
+
       fileStream.on('data', (data) => {
+        bytesUploaded += data.length;
+        const newPercentage = Math.floor((bytesUploaded / fileSize) * 100);
+        if (newPercentage !== uploadedPercentage) {
+          uploadedPercentage = newPercentage;
+          readline.moveCursor(process.stdout, 0, -1);
+          readline.clearLine(process.stdout, 0);
+          console.log(`uploading: ${uploadedPercentage}%`);
+        }
         if (!socket.write(data)) {
           fileStream.pause();
         }
