@@ -4,7 +4,7 @@ const fs = require('fs/promises');
   const fileHandle = await fs.open('hugeFile.txt', 'w');
   const fileStream = fileHandle.createWriteStream();
 
-  const numberOfWrites = 600000000;
+  const numberOfWrites = 900000000;
   let i = 0;
   console.log('writing data to file');
   async function pushToFile() {

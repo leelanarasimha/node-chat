@@ -5,11 +5,18 @@ const server = net.createServer();
 
 server.on('connection', async (socket) => {
   console.log('Client connected');
+
   const fileHandle = await fs.open('storage/test.txt', 'w');
   const fileStream = fileHandle.createWriteStream();
 
   socket.on('data', async (data) => {
-    fileStream.write(data);
+    if (!fileStream.write(data)) {
+      socket.pause();
+    }
+  });
+
+  fileStream.on('drain', () => {
+    socket.resume();
   });
 
   socket.on('end', async () => {
