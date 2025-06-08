@@ -10,13 +10,18 @@ server.on('request', (request, response) => {
 
   console.log('Headers...');
   console.log(request.headers);
+  let data = '';
+  let name = request.headers.name;
 
   request.on('data', (chunk) => {
-    console.log(chunk.toString());
+    data += chunk.toString();
   });
 
   request.on('end', () => {
-    console.log('body completed');
+    data = JSON.parse(data);
+    response.writeHead(200, { 'content-type': 'application/json' });
+    response.write(JSON.stringify({ message: `Post with title ${data.title} was created by ${name}` }));
+    response.end();
   });
 });
 
