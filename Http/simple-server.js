@@ -12,7 +12,7 @@ server.on('request', (request, response) => {
   console.log(request.headers);
 
   request.on('data', (chunk) => {
-    console.log(chunk);
+    console.log(chunk.toString());
   });
 
   request.on('end', () => {
