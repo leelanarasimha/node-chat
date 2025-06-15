@@ -21,6 +21,7 @@ const socket = net.createConnection(
 
 socket.on('data', (chunk) => {
   console.log(chunk.toString());
+  console.log(chunk.toString('hex'));
 });
 
 socket.on('end', () => {
