@@ -1,4 +1,4 @@
-const LeelaJS = require('./leelaJs');
+const LeelaJS = require('../leelaJs');
 
 const leelaJs = new LeelaJS();
 
