@@ -1,69 +1,24 @@
-const http = require('node:http');
-const fs = require('node:fs/promises');
+const LeelaJS = require('./leelaJs');
 
-const server = http.createServer();
+const leelaJs = new LeelaJS();
 
-server.on('request', async (request, response) => {
-  console.log(request.url);
-  console.log(request.method);
-
-  if (request.url === '/' && request.method === 'GET') {
-    response.setHeader('content-type', 'text/html');
-    const fileHandle = await fs.open('./public/index.html', 'r');
-    const fileStream = fileHandle.createReadStream();
-
-    fileStream.pipe(response);
-  }
-
-  if (request.url === '/styles.css' && request.method === 'GET') {
-    response.setHeader('content-type', 'text/css');
-    const fileHandle = await fs.open('./public/styles.css', 'r');
-    const fileStream = fileHandle.createReadStream();
-
-    fileStream.pipe(response);
-  }
-
-  if (request.url === '/main.js' && request.method === 'GET') {
-    response.setHeader('content-type', 'text/javascript');
-    const fileHandle = await fs.open('./public/main.js', 'r');
-    const fileStream = fileHandle.createReadStream();
-
-    fileStream.pipe(response);
-  }
-  if (request.url === '/login' && request.method === 'POST') {
-    response.setHeader('content-type', 'application/json');
-    response.statusCode = 200;
-
-    const body = {
-      message: 'Logging in...'
-    };
-
-    response.end(JSON.stringify(body));
-  }
-
-  if (request.url === '/user' && request.method === 'PUT') {
-    response.setHeader('content-type', 'application/json');
-    response.statusCode = 401;
-
-    const body = {
-      message: 'you first have to log in'
-    };
-
-    response.end(JSON.stringify(body));
-  }
-  if (request.url === '/uploads' && request.method === 'PUT') {
-    const fileHandle = await fs.open('./storage/image.jpeg', 'w');
-    const fileStream = fileHandle.createWriteStream();
-
-    request.pipe(fileStream);
-
-    request.on('end', () => {
-      response.setHeader('content-type', 'application/json');
-      response.end(JSON.stringify({ message: 'File Uploaded Successfully' }));
-    });
-  }
+leelaJs.route('get', '/', (req, res) => {
+  res.sendFile('./public/index.html', 'text/html');
 });
 
-server.listen(9000, () => {
-  console.log('Server is listening at http://localhost:9000');
+leelaJs.route('get', '/styles.css', (req, res) => {
+  res.sendFile('./public/styles.css', 'text/css');
+});
+
+leelaJs.route('get', '/main.js', (req, res) => {
+  res.sendFile('./public/main.js', 'text/javascript');
+});
+leelaJs.route('POST', '/login', (req, res) => {
+  res.status(400).json({ message: 'Bad login info' });
+});
+
+const PORT = 4060;
+
+leelaJs.listen(PORT, () => {
+  console.log(`Server is listening at port ${PORT}`);
 });
