@@ -11,6 +11,8 @@ const POSTS = [
   }
 ];
 
+const SESSIONS = [];
+
 const USERS = [{ id: 1, name: 'leela', username: 'leela', password: 'leela' }];
 
 leelaJs.route('get', '/api/posts', (req, res) => {
@@ -37,6 +39,14 @@ leelaJs.route('post', '/api/login', (req, res) => {
     const userDetails = USERS.find((user) => user.username === username);
 
     if (userDetails && userDetails.password === password) {
+      const token = Math.floor(Math.random() * 10000000000).toString();
+
+      SESSIONS.push({
+        userId: userDetails.id,
+        token
+      });
+      res.setHeader('Set-Cookie', [`token=${token}; Path=/`, `user=Leelawebdev; Path=/`]);
+      //res.setHeader('Set-Cookie', `user=Leelawebdev; Path=/`);
       res.json({ message: 'Successfully Logged in' });
     } else {
       res.status(401).json({ error: 'Invalid username or password' });
@@ -45,6 +55,24 @@ leelaJs.route('post', '/api/login', (req, res) => {
 });
 
 leelaJs.route('get', '/api/user', (req, res) => {
+  const cookies = req.headers.cookie;
+  const cookieArray = cookies.split(';');
+  let cookieData = {};
+  for (let cookie of cookieArray) {
+    const singleCookie = cookie.split('=');
+    cookieData[singleCookie[0].trim()] = singleCookie[1].trim();
+  }
+
+  const token = cookieData['token'];
+
+  const session = SESSIONS.find((sess) => sess.token === token);
+  console.log(session);
+  console.log(SESSIONS);
+  if (session) {
+    console.log('sending User data');
+  } else {
+    res.status(401).json({ error: 'Invalid user data' });
+  }
   //send the current logged in user details
 });
 
