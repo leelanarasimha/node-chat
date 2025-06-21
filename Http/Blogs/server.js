@@ -15,6 +15,23 @@ const SESSIONS = [];
 
 const USERS = [{ id: 1, name: 'leela', username: 'leela', password: 'leela' }];
 
+leelaJs.beforeEach((req, res, next) => {
+  console.log('first middleware called');
+  next();
+});
+leelaJs.beforeEach((req, res, next) => {
+  console.log('second middleware called');
+  setTimeout(() => {
+    next();
+  }, 2000);
+});
+leelaJs.beforeEach((req, res, next) => {
+  console.log('third middleware called');
+  setTimeout(() => {
+    next();
+  }, 2000);
+});
+
 leelaJs.route('get', '/api/posts', (req, res) => {
   const postsData = POSTS.map((post) => {
     const user = USERS.find((user) => user.id === post.userId);
@@ -69,7 +86,8 @@ leelaJs.route('get', '/api/user', (req, res) => {
   console.log(session);
   console.log(SESSIONS);
   if (session) {
-    console.log('sending User data');
+    const user = USERS.find((singleUser) => singleUser.id === session.userId);
+    res.json(user);
   } else {
     res.status(401).json({ error: 'Invalid user data' });
   }
