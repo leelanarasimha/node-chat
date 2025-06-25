@@ -20,7 +20,7 @@ class LeelaJS {
       };
 
       res.status = (code) => {
-        res.statusCode = 404;
+        res.statusCode = code;
         return res;
       };
 

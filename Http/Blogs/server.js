@@ -43,14 +43,19 @@ leelaJs.beforeEach((req, res, next) => {
 
 //Parse json body
 leelaJs.beforeEach((req, res, next) => {
-  const contentType = req.headers['Content-Type'];
+  console.log(req.headers);
+  const contentType = req.headers['content-type'];
+  console.log(contentType);
   if (contentType === 'application/json') {
     let body = '';
     req.on('data', (chunk) => {
       body += chunk.toString('utf8');
     });
     req.on('end', () => {
+      console.log('req end data');
+
       body = JSON.parse(body);
+      console.log(body);
       req.body = body;
       return next();
     });
@@ -98,10 +103,39 @@ leelaJs.route('get', '/api/user', (req, res) => {
   //send the current logged in user details
 });
 
-leelaJs.route('put', '/api/user', (req, res) => {});
+leelaJs.route('put', '/api/user', (req, res) => {
+  const name = req.body.name;
+  const username = req.body.username;
 
-leelaJs.route('post', '/api/posts', (req, res) => {});
-leelaJs.route('delete', '/api/logout', (req, res) => {});
+  const user = USERS.find((user) => user.id === req.userId);
+
+  user.name = name;
+  user.username = username;
+
+  res.json({ message: 'User updated succesfully' });
+});
+
+leelaJs.route('post', '/api/posts', (req, res) => {
+  const title = req.body.title;
+  const description = req.body.body;
+
+  const post = {
+    id: POSTS.length + 1,
+    title,
+    description,
+    userId: req.userId
+  };
+
+  POSTS.unshift(post);
+  res.status(201).json(post);
+});
+leelaJs.route('delete', '/api/logout', (req, res) => {
+  const sessionIndex = SESSIONS.findIndex((session) => session.userId === req.userId);
+  SESSIONS.splice(sessionIndex, 1);
+
+  res.setHeader('Set-Cookie', `token=deleted; Path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT`);
+  res.status(200).json({ message: 'Logged put successfully' });
+});
 
 leelaJs.listen(8000, () => {
   console.log(`Server is listening at port 8000`);
