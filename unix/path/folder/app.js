@@ -1,6 +1,6 @@
 const fs = require('fs');
-const { Z_PARTIAL_FLUSH } = require('zlib');
+const path = require('node:path');
 require('./file.js');
 
-const content = fs.readFileSync('./text.txt', 'utf8');
+const content = fs.readFileSync(path.join(__dirname, 'text.txt'), 'utf8');
 console.log(content.toString());
