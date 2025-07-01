@@ -8,7 +8,7 @@ printf("Parent Process Id: %d \n", getppid());
 printf("MODE is %s\n", getenv("MODE"));
 
 for (int i = 0; i < argc; i++) {
-        printf("Argument %d: %s\n", i, argv[i]);
+        fprintf(stdout, "Argument %d: %s\n", i, argv[i]);
     }
     return 0;
 
