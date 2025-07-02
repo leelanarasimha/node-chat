@@ -3,13 +3,16 @@
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-printf("Process Id: %d \n", getpid());
-printf("Parent Process Id: %d \n", getppid());
-printf("MODE is %s\n", getenv("MODE"));
+fprintf(stdout, "Process Id: %d \n", getpid());
+fprintf(stdout, "Parent Process Id: %d \n", getppid());
+fprintf(stderr, "MODE is %s\n", getenv("MODE"));
 
-for (int i = 0; i < argc; i++) {
-        fprintf(stdout, "Argument %d: %s\n", i, argv[i]);
-    }
+char c;
+while((c=fgetc(stdin))!=EOF) {
+    fprintf(stdout, "data coming from c program: %c", c);
+    fflush(stdout);
+}
+
     return 0;
 
 }
