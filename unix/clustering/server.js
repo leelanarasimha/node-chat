@@ -14,6 +14,5 @@ LeelaJS.route('get', '/heavy', (req, res) => {
 });
 
 LeelaJS.listen(PORT, () => {
-  console.log(process.pid);
   console.log(`Server is listening at port ${PORT}`);
 });
