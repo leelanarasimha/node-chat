@@ -1,8 +1,7 @@
 const { Worker } = require('node:worker_threads');
 
-const a = 400;
-console.log(a);
+const obj = { name: 'john' };
 
-for (let i = 0; i < 10; i++) {
-  new Worker('./calc.js');
-}
+const worker = new Worker('./calc.js', { workerData: obj });
+
+console.log('main thread: ', obj.name);

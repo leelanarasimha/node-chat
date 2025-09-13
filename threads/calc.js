@@ -1,4 +1,5 @@
-const a = 1000;
-console.log(a);
+const { workerData } = require('node:worker_threads');
+console.log('This is the worker thread');
+workerData.name = 'Leela';
 
-while (true) {}
+console.log('WOrker Data: ', workerData.name);
